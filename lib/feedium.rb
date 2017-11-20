@@ -44,6 +44,14 @@ module Feedium
     nil
   end
 
+  def self.find!(url)
+    feed = self.find(url)
+
+    raise Feedium::RequestError.new('Feed not found') if feed.nil?
+
+    feed
+  end
+
   def self.feed?(url)
     @request = Request.new(url)
     @request.send
