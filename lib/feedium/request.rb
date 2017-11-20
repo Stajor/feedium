@@ -19,17 +19,23 @@ class Feedium::Request
 
     raise Feedium::RequestError.new('Not valid url') unless @url =~ URI_REQEX
 
-    @io = open(url, {
-        allow_redirections: :all,
-        read_timeout: 10,
-        open_timeout: 10,
-        content_length_proc: ->(size) {
-          raise Feedium::RequestError.new('File Too Large') if size && size > MAX_CONTENT_SIZE
-        },
-        progress_proc: ->(size) {
-          raise Feedium::RequestError.new('File Too Large') if size > MAX_CONTENT_SIZE
-        },
-        'User-Agent' => 'Feedium'
-    })
+    begin
+      @io = open(url, {
+          allow_redirections: :all,
+          read_timeout: 10,
+          open_timeout: 10,
+          content_length_proc: ->(size) {
+            raise Feedium::RequestError.new('File Too Large') if size && size > MAX_CONTENT_SIZE
+          },
+          progress_proc: ->(size) {
+            raise Feedium::RequestError.new('File Too Large') if size > MAX_CONTENT_SIZE
+          },
+          'User-Agent' => 'Feedium'
+      })
+    rescue Net::ReadTimeout => e
+      raise Feedium::RequestError.new(e.message)
+    rescue OpenURI::HTTPError => e
+      raise Feedium::RequestError.new(e.message)
+    end
   end
 end
