@@ -33,7 +33,7 @@ class Feedium::Request
           'User-Agent' => 'Feedium'
       })
     rescue Net::ReadTimeout => e
-      raise Feedium::RequestError.new(e.message)
+      raise Feedium::RequestError.new(e.message == 'Net::ReadTimeout' ? '598 Network Read Timeout Error' : e.message)
     rescue OpenURI::HTTPError => e
       raise Feedium::RequestError.new(e.message)
     rescue Errno::ECONNREFUSED => e
