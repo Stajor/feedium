@@ -25,20 +25,25 @@ module Feedium
     doc   = Nokogiri::HTML(@request.io.read)
 
     if doc.at('base') && doc.at('base')['href']
-      base_uri = doc.at('base')['href']
+      @base_uri = doc.at('base')['href']
     else
-      base_uri = "#{@request.uri.scheme}://#{@request.uri.host}"
+      @base_uri = "#{@request.uri.scheme}://#{@request.uri.host}"
     end
 
     doc.xpath("//link[@rel='alternate'][@href][@type]").each do |l|
       if CONTENT_TYPES.include?(l['type'].downcase.strip)
-        return @request.url if self.feed?(base_uri ? URI.parse(base_uri).merge(l['href']).to_s : l['href'])
+        return @request.url if self.feed?(l['href'])
       end
     end
 
     doc.xpath("//a[@href]").each do |a|
-      url = %w(feed rss atom).detect {|k| a['href'].end_with?(k) }
-      return @request.url if url && self.feed?(base_uri ? URI.parse(base_uri).merge(url).to_s : url)
+      found = %w(feed rss atom).detect {|k| !a['href'].index(k).nil? }
+
+      begin
+        return @request.url if found && self.feed?(a['href'])
+      rescue Feedium::RequestError
+        next
+      end
     end
 
     nil
@@ -53,7 +58,7 @@ module Feedium
   end
 
   def self.feed?(url)
-    @request = Request.new(url)
+    @request = Request.new(url, @base_uri)
     @request.send
 
     content_type = @request.io.content_type.downcase

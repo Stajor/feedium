@@ -4,7 +4,9 @@ class Feedium::Request
   URI_REQEX         = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
   MAX_CONTENT_SIZE  = 5 * 1048576 # bytes in 1MB
 
-  def initialize(url)
+  def initialize(url, base_uri = nil)
+    url = URI.parse(base_uri).merge(url).to_s if base_uri
+
     begin
       @uri = URI.parse(url)
     rescue URI::InvalidURIError => e
