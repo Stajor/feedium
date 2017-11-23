@@ -64,13 +64,25 @@ module Feedium
     content_type = @request.io.content_type.downcase
     content_type = @request.io.meta['content-type'].gsub(/;.*$/, '') if content_type == 'application/octet-stream'
 
-    CONTENT_TYPES.include?(content_type) ? true : false
+    is_feed = CONTENT_TYPES.include?(content_type) ? true : false
+
+    if !is_feed
+      begin
+        is_feed = !self.parse(url, @request.io.read).class.name.index('Feedjira::Parser').nil?
+        rescue
+      end
+    end
+
+    is_feed
   end
 
-  def self.parse(url)
-    request = Request.new(url)
-    request.send
+  def self.parse(url, content = nil)
+    if content.nil?
+      request = Request.new(url)
+      request.send
+      content = request.io.read
+    end
 
-    Feedjira::Feed.parse(request.io.read)
+    Feedjira::Feed.parse(content)
   end
 end
