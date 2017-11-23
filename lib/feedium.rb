@@ -20,6 +20,14 @@ module Feedium
   ).freeze
 
   def self.find(url)
+    begin
+      uri   = URI.parse(url.index('http') ? url : "http://#{url}")
+      query = uri.query.nil? ? '' : "?#{uri.query}"
+      url   = "#{uri.scheme}://#{uri.host}#{uri.path}#{query}"
+    rescue URI::InvalidURIError => e
+      raise Feedium::RequestError.new(e.message)
+    end
+
     return @request.url if self.feed?(url)
 
     @body = @body || @request.io.read

@@ -13,6 +13,7 @@ RSpec.describe Feedium do
     expect { Feedium.find('http://github.com') }.not_to raise_error
     expect { Feedium.find('https://github.com') }.not_to raise_error
     expect { Feedium.find('https://www.github.com') }.not_to raise_error
+    expect { Feedium.find('github.com') }.not_to raise_error
   end
 
   it 'has a feed url' do
