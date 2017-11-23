@@ -22,7 +22,8 @@ module Feedium
   def self.find(url)
     return @request.url if self.feed?(url)
 
-    doc   = Nokogiri::HTML(@request.io.read)
+    @body = @body || @request.io.read
+    doc = Nokogiri::HTML(@body)
 
     if doc.at('base') && doc.at('base')['href']
       @base_uri = doc.at('base')['href']
@@ -68,7 +69,8 @@ module Feedium
 
     if !is_feed
       begin
-        is_feed = !self.parse(url, @request.io.read).class.name.index('Feedjira::Parser').nil?
+        @body = @request.io.read
+        is_feed = !self.parse(url, @body).class.name.index('Feedjira::Parser').nil?
         rescue
       end
     end

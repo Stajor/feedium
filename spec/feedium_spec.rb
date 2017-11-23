@@ -16,7 +16,7 @@ RSpec.describe Feedium do
   end
 
   it 'has a feed url' do
-    url = 'https://github.com/jnunemaker/httparty'
+    url = 'https://github.com/Stajor/feedium'
     expect(Feedium.find(url)).to eq(url + '/commits/master.atom')
   end
 end
