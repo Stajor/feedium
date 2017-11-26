@@ -40,6 +40,8 @@ class Feedium::Request
       raise Feedium::RequestError.new(e.message)
     rescue OpenURI::HTTPError => e
       raise Feedium::RequestError.new(e.message)
+    rescue OpenSSL::SSL::SSLError => e
+      raise Feedium::RequestError.new(e.message)
     rescue Errno::ECONNREFUSED => e
       raise Feedium::RequestError.new(e.message)
     end
