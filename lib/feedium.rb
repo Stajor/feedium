@@ -20,6 +20,8 @@ module Feedium
   ).freeze
 
   def self.find(url)
+    url = url.downcase
+
     begin
       uri   = URI.parse(url.index('http') ? url : "http://#{url}")
       query = uri.query.nil? ? '' : "?#{uri.query}"
@@ -88,7 +90,7 @@ module Feedium
 
   def self.parse(url, content = nil)
     if content.nil?
-      request = Request.new(url)
+      request = Request.new(url.downcase)
       request.send
       content = request.io.read
     end
