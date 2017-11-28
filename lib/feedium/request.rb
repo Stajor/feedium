@@ -19,7 +19,7 @@ class Feedium::Request
     query       = @uri.query.nil? ? '' : "?#{@uri.query}"
     @url        = "#{@uri.scheme}://#{@uri.host}#{@uri.path}#{query}"
 
-    raise Feedium::RequestError.new('Not valid url') unless @url =~ URI_REQEX
+    raise Feedium::RequestError.new('Not valid url') unless @url.downcase =~ URI_REQEX
 
     begin
       @io = open(url, {
