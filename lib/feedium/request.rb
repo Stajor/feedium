@@ -5,7 +5,7 @@ class Feedium::Request
   MAX_CONTENT_SIZE  = 5 * 1048576 # bytes in 1MB
 
   def initialize(url, base_uri = nil)
-    url = url.downcase.strip
+    url = url.strip
     url = URI.parse(base_uri).merge(url).to_s if base_uri
 
     begin
