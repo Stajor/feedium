@@ -21,7 +21,7 @@ module Feedium
 
   def self.find(url)
     begin
-      uri   = URI.parse(url.index('http') ? url : "http://#{url}")
+      uri   = URI.parse(url.downcase.index('http') ? url : "http://#{url}")
       query = uri.query.nil? ? '' : "?#{uri.query}"
       url   = "#{uri.scheme}://#{uri.host}#{uri.path}#{query}"
     rescue URI::InvalidURIError => e
@@ -31,6 +31,7 @@ module Feedium
     return @request.url if self.feed?(url)
 
     @body = @body || @request.io.read
+
     doc = Nokogiri::HTML(@body)
 
     if doc.at('base') && doc.at('base')['href']
@@ -69,9 +70,10 @@ module Feedium
   def self.feed?(url)
     @request = Request.new(url, @base_uri)
     @request.send
+    meta_type = @request.io.meta['content-type']
 
     content_type = @request.io.content_type.downcase
-    content_type = @request.io.meta['content-type'].gsub(/;.*$/, '') if content_type == 'application/octet-stream'
+    content_type = meta_type.gsub(/;.*$/, '') if content_type == 'application/octet-stream' && !meta_type.nil?
 
     is_feed = CONTENT_TYPES.include?(content_type) ? true : false
 
