@@ -94,6 +94,10 @@ module Feedium
       request = Request.new(url)
       request.send
       content = request.io.read
+
+      if request.io.meta['content-encoding'] == 'gzip'
+        content = Zlib::GzipReader.new(StringIO.new(content)).read.force_encoding('utf-8')
+      end
     end
 
     Feedjira::Feed.parse(content)
