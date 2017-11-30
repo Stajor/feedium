@@ -7,6 +7,7 @@ require 'net/http'
 require 'open_uri_redirections'
 require 'nokogiri'
 require 'feedjira'
+require 'openssl'
 
 module Feedium
   CONTENT_TYPES = %w(

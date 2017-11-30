@@ -33,7 +33,8 @@ class Feedium::Request
           progress_proc: ->(size) {
             raise Feedium::RequestError.new('File Too Large') if size > MAX_CONTENT_SIZE
           },
-          'User-Agent' => 'Feedium'
+          'User-Agent' => 'Feedium',
+          'Accept-Encoding' => ''
       })
     rescue Net::ReadTimeout => e
       raise Feedium::RequestError.new(e.message == 'Net::ReadTimeout' ? '598 Network Read Timeout Error' : e.message)
