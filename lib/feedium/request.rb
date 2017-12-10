@@ -50,6 +50,8 @@ class Feedium::Request
       raise Feedium::RequestError.new(e.message)
     rescue Errno::ENETUNREACH => e
       raise Feedium::RequestError.new(e.message)
+    rescue RuntimeError => e
+      raise Feedium::RequestError.new(e.message)
     end
   end
 end
