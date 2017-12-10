@@ -46,6 +46,10 @@ class Feedium::Request
       raise Feedium::RequestError.new(e.message)
     rescue Errno::ECONNREFUSED => e
       raise Feedium::RequestError.new(e.message)
+    rescue SocketError=> e
+      raise Feedium::RequestError.new(e.message)
+    rescue Errno::ENETUNREACH => e
+      raise Feedium::RequestError.new(e.message)
     end
   end
 end
